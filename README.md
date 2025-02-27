@@ -16,14 +16,14 @@ A modern, interactive loan calculator built with React, TypeScript, and Material
 
 ## Demo
 
-[Live Demo](https://your-demo-url.com) (Coming soon)
+[Live Demo](https://md-loan-calculator-cjs.netlify.app) (Coming soon)
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/loan-calculator.git
-cd loan-calculator
+git clone https://github.com/IT-gMA/Loan-Calculator-with-Charts.git
+cd Loan-Calculator-with-Charts
 ```
 
 2. Install dependencies:
@@ -36,7 +36,7 @@ npm install
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`
+The application will be available at `https://md-loan-calculator-cjs.netlify.app`
 
 ## Usage
 
