@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 
 type Period = 'weekly' | 'fortnightly' | 'monthly';
-import {numberWithCommas} from '../../utils/UtilFunctions';
+import {numberWithCommas, minLoanAmount, maxLoanAmount, validateInputs} from '../../utils/UtilFunctions';
 
 interface LoanInputFormProps {
   loanAmount: number;
@@ -48,18 +48,14 @@ const LoanInputForm = ({
     let formattedValue = loanAmount;
     
     // Apply validation constraints
-    if (formattedValue < 50000) {
-      formattedValue = 50000;
-    } else if (formattedValue > 950000) {
-      formattedValue = 950000;
-    }
+    formattedValue = formattedValue < minLoanAmount ? minLoanAmount : formattedValue > maxLoanAmount ? maxLoanAmount : formattedValue;
     
     // Format the value with thousand separators
-    const numberFormat = new Intl.NumberFormat('en-US', {
+    /*const numberFormat = new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
-    });
-    
+    });*/
+
     setLoanAmount(formattedValue);
   };
 
@@ -76,8 +72,8 @@ const LoanInputForm = ({
             handleLoanAmountBlur();
             e.target.value = loanAmount.toString();
           }}
-          error={loanAmount < 50000 || loanAmount > 950000}
-          helperText={loanAmount < 50000 || loanAmount > 950000 ? 'Enter an amount between $50,000 and $950,000' : ''}
+          error={loanAmount < minLoanAmount || loanAmount > maxLoanAmount}
+          helperText={loanAmount < minLoanAmount || loanAmount > maxLoanAmount ? `Enter an amount between $${numberWithCommas(minLoanAmount)} and $${numberWithCommas(maxLoanAmount)}` : ''}
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
           }}
@@ -133,7 +129,7 @@ const LoanInputForm = ({
         </FormControl>
       </Box>
 
-      <Box sx={{ mb: 3 }}><br></br>
+      <Box sx={{ mb: 3, opacity: validateInputs(loanAmount, interestRate, years) ? 1 : 0 }}><br></br>
         <Typography variant="h6">
           {period.charAt(0).toUpperCase() + period.slice(1)} Payment: ${payment.toFixed(2)}
         </Typography>
