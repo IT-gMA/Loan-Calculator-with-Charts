@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 
 type Period = 'weekly' | 'fortnightly' | 'monthly';
+import {numberWithCommas} from '../../utils/UtilFunctions';
 
 interface LoanInputFormProps {
   loanAmount: number;
@@ -132,10 +133,11 @@ const LoanInputForm = ({
         </FormControl>
       </Box>
 
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3 }}><br></br>
         <Typography variant="h6">
           {period.charAt(0).toUpperCase() + period.slice(1)} Payment: ${payment.toFixed(2)}
         </Typography>
+        <i><h5>To pay off ${numberWithCommas(loanAmount)} over {years} year{years > 1 ? 's' : ''} with a {interestRate}% interest</h5></i>
       </Box>
     </Grid>
   );
