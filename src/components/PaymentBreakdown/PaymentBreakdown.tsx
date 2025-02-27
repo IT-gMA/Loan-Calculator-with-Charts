@@ -10,9 +10,8 @@ import {
 import { Bar } from 'react-chartjs-2';
 import * as XLSX from 'xlsx';
 
-// Type definitions for chart scale and payment period options
+// Type definition for chart scale options
 type ChartScale = 'week' | 'month' | 'year';
-type Period = 'weekly' | 'fortnightly' | 'monthly';
 
 /**
  * Props interface for the PaymentBreakdown component
@@ -29,7 +28,8 @@ interface PaymentBreakdownProps {
   chartScale: ChartScale;
   setChartScale: (value: ChartScale) => void;
   chartData: Array<any>;
-
+  period: 'weekly' | 'fortnightly' | 'monthly';
+  payment: number;
   isValid: boolean;
   onApply: () => void;
 }
