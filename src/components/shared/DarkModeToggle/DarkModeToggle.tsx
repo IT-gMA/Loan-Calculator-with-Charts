@@ -1,7 +1,5 @@
-import { Box, Switch, FormControlLabel } from '@mui/material';
+import { Box, Switch } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
 import {switchTrackBackgroundColour} from '../../../utils/UtilFunctions';
 
 interface DarkModeToggleProps {
