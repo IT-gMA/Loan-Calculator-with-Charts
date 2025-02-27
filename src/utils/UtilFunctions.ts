@@ -1,5 +1,7 @@
 export const minLoanAmount: number = 50000;
 export const maxLoanAmount: number = 95000;
+export const minInterest: number = 5;
+export const maxInterest: number = 10;
 
 // Type definitions for payment periods and chart scale options
 type Period = 'weekly' | 'fortnightly' | 'monthly';
@@ -97,15 +99,15 @@ export const generateChartData = (loanAmount: number, interestRate: number, year
  * Validates user input values against predefined ranges.
  * 
  * @param loanAmount - Must be between 50,000 and 950,000
- * @param interestRate - Must be between 5% and 7%
+ * @param interestRate - Must be between 5% and 10%
  * @param years - Must be between 5 and 30 years
  * @returns Boolean indicating whether all inputs are valid
  */
 export const validateInputs = (loanAmount: number, interestRate: number, years: number): boolean => {
   return loanAmount >= minLoanAmount && 
          loanAmount <= maxLoanAmount && 
-         interestRate >= 5 && 
-         interestRate <= 7 && 
+         interestRate >= minInterest && 
+         interestRate <= maxInterest && 
          years >= 5 && 
          years <= 30;
 };

@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 
 type Period = 'weekly' | 'fortnightly' | 'monthly';
-import {numberWithCommas, minLoanAmount, maxLoanAmount, validateInputs} from '../../utils/UtilFunctions';
+import {numberWithCommas, minLoanAmount, maxLoanAmount, minInterest, maxInterest, validateInputs} from '../../utils/UtilFunctions';
 
 interface LoanInputFormProps {
   loanAmount: number;
@@ -94,8 +94,8 @@ const LoanInputForm = ({
         <Slider
           value={interestRate}
           onChange={(_, value) => setInterestRate(value as number)}
-          min={5}
-          max={10}
+          min={minInterest}
+          max={maxInterest}
           step={0.1}
           marks
           valueLabelDisplay="auto"
