@@ -32,6 +32,7 @@ interface PaymentBreakdownProps {
   payment: number;
   isValid: boolean;
   onApply: () => void;
+  onReset: () => void;
 }
 
 /**
@@ -43,9 +44,9 @@ const PaymentBreakdown = ({
   chartScale,
   setChartScale,
   chartData,
-
   isValid,
-  onApply
+  onApply,
+  onReset
 }: PaymentBreakdownProps) => {
   // Function to handle exporting chart data to Excel
   const handleExportToExcel = () => {
@@ -127,6 +128,27 @@ const PaymentBreakdown = ({
             }}
           >
             Download Excel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={onReset}
+            sx={{
+              padding: '.5em 2em',
+              '&:focus': {
+                outline: 'none',
+                boxShadow: 'none'
+              },
+              '&:hover': {
+                color: '#ffffff',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+              },
+              '&:active': {
+                color: '#ffffff',
+                boxShadow: '0 6px 12px rgba(0,0,0,0.3)'
+              }
+            }}
+          >
+            Reset
           </Button>
         </Box>
       </Box>

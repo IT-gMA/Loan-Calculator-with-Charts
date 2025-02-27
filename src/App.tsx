@@ -49,12 +49,36 @@ const theme = createTheme({
  * and payment schedules. Provides a user interface for input and visualization.
  */
 function App() {
+  // Default values for loan parameters
+  const defaultValues = {
+    loanAmount: 50000,
+    interestRate: 5,
+    years: 5,
+    period: 'monthly' as Period,
+    chartScale: 'year' as ChartScale
+  };
+
   // State management for loan parameters and chart display
-  const [loanAmount, setLoanAmount] = useState<number>(50000);
-  const [interestRate, setInterestRate] = useState<number>(5);
-  const [years, setYears] = useState<number>(5);
-  const [period, setPeriod] = useState<Period>('monthly');
-  const [chartScale, setChartScale] = useState<ChartScale>('year');
+  const [loanAmount, setLoanAmount] = useState<number>(() => {
+    const saved = localStorage.getItem('loanAmount');
+    return saved ? Number(saved) : defaultValues.loanAmount;
+  });
+  const [interestRate, setInterestRate] = useState<number>(() => {
+    const saved = localStorage.getItem('interestRate');
+    return saved ? Number(saved) : defaultValues.interestRate;
+  });
+  const [years, setYears] = useState<number>(() => {
+    const saved = localStorage.getItem('years');
+    return saved ? Number(saved) : defaultValues.years;
+  });
+  const [period, setPeriod] = useState<Period>(() => {
+    const saved = localStorage.getItem('period');
+    return saved ? saved as Period : defaultValues.period;
+  });
+  const [chartScale, setChartScale] = useState<ChartScale>(() => {
+    const saved = localStorage.getItem('chartScale');
+    return saved ? saved as ChartScale : defaultValues.chartScale;
+  });
   const [chartData, setChartData] = useState<Array<any>>([]);
   const [isValid, setIsValid] = useState<boolean>(true);
 
@@ -86,10 +110,25 @@ function App() {
     }
   };
 
-  // Initialize chart data on component mount
+  // Save state to localStorage whenever it changes
   useEffect(() => {
+    localStorage.setItem('loanAmount', loanAmount.toString());
+    localStorage.setItem('interestRate', interestRate.toString());
+    localStorage.setItem('years', years.toString());
+    localStorage.setItem('period', period);
+    localStorage.setItem('chartScale', chartScale);
     handleApply();
-  }, []);
+  }, [loanAmount, interestRate, years, period, chartScale]);
+
+  // Handle reset of all values to defaults
+  const handleReset = () => {
+    setLoanAmount(defaultValues.loanAmount);
+    setInterestRate(defaultValues.interestRate);
+    setYears(defaultValues.years);
+    setPeriod(defaultValues.period);
+    setChartScale(defaultValues.chartScale);
+    localStorage.clear();
+  };
 
   /**
    * Calculates periodic payment amount based on loan parameters
@@ -182,6 +221,7 @@ function App() {
               payment={calculatePayments()}
               isValid={isValid}
               onApply={handleApply}
+              onReset={handleReset}
             />
           </Grid>
         </Paper>
