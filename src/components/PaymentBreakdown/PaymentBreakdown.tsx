@@ -29,8 +29,7 @@ interface PaymentBreakdownProps {
   chartScale: ChartScale;
   setChartScale: (value: ChartScale) => void;
   chartData: Array<any>;
-  period: Period;
-  payment: number;
+
   isValid: boolean;
   onApply: () => void;
 }
@@ -44,8 +43,7 @@ const PaymentBreakdown = ({
   chartScale,
   setChartScale,
   chartData,
-  period,
-  payment,
+
   isValid,
   onApply
 }: PaymentBreakdownProps) => {
@@ -168,7 +166,10 @@ const PaymentBreakdown = ({
             plugins: {
               tooltip: {
                 callbacks: {
-                  label: (context) => `${context.dataset.label}: $${context.raw.toFixed(2)}`,
+                  label: (context) => {
+                    const value = context.raw as number;
+                    return `${context.dataset.label}: $${value.toFixed(2)}`;
+                  },
                 },
               },
             },
