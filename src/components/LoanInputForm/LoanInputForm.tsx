@@ -7,7 +7,8 @@ import {
   InputLabel,
   Box,
   Slider,
-  Grid
+  Grid,
+  InputAdornment
 } from '@mui/material';
 
 type Period = 'weekly' | 'fortnightly' | 'monthly';
@@ -36,10 +37,29 @@ const LoanInputForm = ({
   payment
 }: LoanInputFormProps) => {
   const handleLoanAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value);
-    if (value >= 50000 && value <= 950000) {
-      setLoanAmount(value);
+    // Remove leading zeros and convert to number
+    const cleanValue = e.target.value.replace(/^0+/, '');
+    const value = cleanValue === '' ? 0 : Number(cleanValue);
+    setLoanAmount(value);
+  };
+
+  const handleLoanAmountBlur = () => {
+    let formattedValue = loanAmount;
+    
+    // Apply validation constraints
+    if (formattedValue < 50000) {
+      formattedValue = 50000;
+    } else if (formattedValue > 950000) {
+      formattedValue = 950000;
     }
+    
+    // Format the value with thousand separators
+    const numberFormat = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+    
+    setLoanAmount(formattedValue);
   };
 
   return (
@@ -49,14 +69,26 @@ const LoanInputForm = ({
           fullWidth
           label="Loan Amount"
           type="number"
-          value={loanAmount}
+          value={loanAmount.toString()}
           onChange={handleLoanAmountChange}
-          inputProps={{
-            min: 50000,
-            max: 950000,
-            step: 1000
+          onBlur={(e) => {
+            handleLoanAmountBlur();
+            e.target.value = loanAmount.toString();
           }}
-          helperText="Enter an amount between $50,000 and $950,000"
+          error={loanAmount < 50000 || loanAmount > 950000}
+          helperText={loanAmount < 50000 || loanAmount > 950000 ? 'Enter an amount between $50,000 and $950,000' : ''}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+          sx={{
+            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+              '-webkit-appearance': 'none',
+              margin: 0
+            },
+            '& input[type=number]': {
+              '-moz-appearance': 'textfield'
+            }
+          }}
         />
       </Box>
 

@@ -92,7 +92,7 @@ const PaymentBreakdown = ({
           <Button 
             variant="contained" 
             onClick={onApply}
-            disabled={!isValid}
+            disabled={!isValid || chartData.length === 0}
             sx={{
               padding: '.5em 2em',
               width: '100%',

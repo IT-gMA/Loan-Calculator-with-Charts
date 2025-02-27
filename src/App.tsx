@@ -98,11 +98,12 @@ function App() {
    * Validates inputs and updates chart data if valid.
    */
   const handleApply = () => {
-    if (validateInputs()) {
-      setChartData(generateChartData());
-      setIsValid(true);
-    } else {
-      setIsValid(false);
+    const isInputValid = validateInputs();
+    setIsValid(isInputValid);
+    
+    if (isInputValid) {
+      const newChartData = generateChartData();
+      setChartData(newChartData);
     }
   };
 
@@ -113,8 +114,12 @@ function App() {
     localStorage.setItem('years', years.toString());
     localStorage.setItem('period', period);
     localStorage.setItem('chartScale', chartScale);
-    handleApply();
   }, [loanAmount, interestRate, years, period, chartScale]);
+
+  // Initial chart data generation
+  useEffect(() => {
+    handleApply();
+  }, []);
 
   // Handle reset of all values to defaults
   const handleReset = () => {
