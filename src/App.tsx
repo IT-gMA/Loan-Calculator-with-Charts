@@ -36,7 +36,7 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
+import {minLoanAmount, minInterest, validateInputs} from './utils/UtilFunctions';
 
 
 /**
@@ -47,8 +47,8 @@ ChartJS.register(
 function App() {
   // Default values for loan parameters
   const defaultValues = {
-    loanAmount: 50000,
-    interestRate: 5,
+    loanAmount: minLoanAmount,
+    interestRate: minInterest,
     years: 5,
     period: 'monthly' as Period,
     chartScale: 'year' as ChartScale
@@ -79,26 +79,11 @@ function App() {
   const [isValid, setIsValid] = useState<boolean>(true);
 
   /**
-   * Validates user inputs against predefined ranges
-   * Loan amount: 50,000 - 950,000
-   * Interest rate: 5% - 10%
-   * Years: 5 - 30
-   */
-  const validateInputs = () => {
-    return loanAmount >= 50000 && 
-           loanAmount <= 950000 && 
-           interestRate >= 5 && 
-           interestRate <= 10 && 
-           years >= 5 && 
-           years <= 30;
-  };
-
-  /**
    * Handles the apply button click.
    * Validates inputs and updates chart data if valid.
    */
   const handleApply = () => {
-    const isInputValid = validateInputs();
+    const isInputValid = validateInputs(loanAmount, interestRate, years);
     setIsValid(isInputValid);
     
     if (isInputValid) {

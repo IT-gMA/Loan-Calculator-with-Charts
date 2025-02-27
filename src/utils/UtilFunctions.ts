@@ -1,7 +1,7 @@
-export const minLoanAmount: number = 50000;
-export const maxLoanAmount: number = 95000;
-export const minInterest: number = 5;
-export const maxInterest: number = 10;
+export const minLoanAmount: number = 50000;         // $50,000
+export const maxLoanAmount: number = 950000;        // $950,000
+export const minInterest: number = 5;               // 5%
+export const maxInterest: number = 10;              // 10%
 
 // Type definitions for payment periods and chart scale options
 type Period = 'weekly' | 'fortnightly' | 'monthly';
