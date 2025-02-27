@@ -84,7 +84,18 @@ const LoanInputForm = ({
             },
             '& input[type=number]': {
               '-moz-appearance': 'textfield'
-            }
+            },
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: 'primary.main',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: 'primary.main',
+              },
+            },
+            '& label.Mui-focused': {
+              color: 'primary.main',
+            },
           }}
         />
       </Box>
@@ -99,6 +110,16 @@ const LoanInputForm = ({
           step={0.1}
           marks
           valueLabelDisplay="auto"
+          sx={{
+            '& .MuiSlider-thumb': {
+              '&:hover, &.Mui-focusVisible': {
+                boxShadow: '0 0 0 8px rgba(255, 187, 109, 0.16)',
+              },
+            },
+            '& .MuiSlider-track': {
+              transition: 'background-color 0.3s ease',
+            },
+          }}
         />
       </Box>
 
@@ -111,6 +132,16 @@ const LoanInputForm = ({
           max={30}
           marks
           valueLabelDisplay="auto"
+          sx={{
+            '& .MuiSlider-thumb': {
+              '&:hover, &.Mui-focusVisible': {
+                boxShadow: '0 0 0 8px rgba(255, 187, 109, 0.16)',
+              },
+            },
+            '& .MuiSlider-track': {
+              transition: 'background-color 0.3s ease',
+            },
+          }}
         />
       </Box>
 
@@ -121,6 +152,14 @@ const LoanInputForm = ({
             value={period}
             label="Repayment Period"
             onChange={(e) => setPeriod(e.target.value as Period)}
+            sx={{
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'primary.main',
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'primary.main',
+              },
+            }}
           >
             <MenuItem value="weekly">Weekly</MenuItem>
             <MenuItem value="fortnightly">Fortnightly</MenuItem>
@@ -130,7 +169,7 @@ const LoanInputForm = ({
       </Box>
 
       <Box sx={{ mb: 3, opacity: validateInputs(loanAmount, interestRate, years) ? 1 : 0 }}><br></br>
-        <Typography variant="h6">
+        <Typography variant="h6" sx={{ color: 'primary.main' }}>
           {period.charAt(0).toUpperCase() + period.slice(1)} Payment: ${payment.toFixed(2)}
         </Typography>
         <Typography variant="body1" component="div" style={{ fontStyle: 'italic' }}>

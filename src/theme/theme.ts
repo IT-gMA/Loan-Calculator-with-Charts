@@ -30,7 +30,7 @@ const getTheme = (mode: 'light' | 'dark') => {
         contrastText: mode === 'light' ? '#ffffff' : '#000000',
       },
       background: {
-        default: mode === 'light' ? '#ffffff' : '#2c2c2c',
+        default: mode === 'light' ? '#fffaf8' : '#2c2c2c',
         paper: mode === 'light' ? '#ffffff' : '#383838',
       },
       text: {
@@ -43,7 +43,7 @@ const getTheme = (mode: 'light' | 'dark') => {
         styleOverrides: {
           root: {
             transition: 'all 0.3s ease',
-            backgroundColor: mode === 'dark' ? '#383838' : '#ffffff',
+            backgroundColor: mode === 'dark' ? '#383838' : '#fffafa',
             boxShadow: mode === 'dark' ? '0 8px 32px rgba(0,0,0,0.3)' : '0 3px 6px rgba(0,0,0,0.1)',
           },
         },
