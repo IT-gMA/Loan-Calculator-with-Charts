@@ -107,4 +107,6 @@ export const validateInputs = (loanAmount: number, interestRate: number, years: 
          years <= 30;
 };
 
+export const numberWithCommas = (value: number): string => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
 export const switchTrackBackgroundColour: string = '#d6d7dc';   // For Dark/Light Mode Toggles
