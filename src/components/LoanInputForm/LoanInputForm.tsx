@@ -133,7 +133,10 @@ const LoanInputForm = ({
         <Typography variant="h6">
           {period.charAt(0).toUpperCase() + period.slice(1)} Payment: ${payment.toFixed(2)}
         </Typography>
-        <i><h5>To pay off ${numberWithCommas(loanAmount)} over {years} year{years > 1 ? 's' : ''} with a {interestRate}% interest</h5></i>
+        <Typography variant="body1" component="div" style={{ fontStyle: 'italic' }}>
+          <Box>To pay off ${numberWithCommas(loanAmount)} over {years} year{years > 1 ? 's' : ''} with a {interestRate}% interest</Box>
+          <Box>Total Interest Paid: ${numberWithCommas((payment * (years * (period === 'weekly' ? 52 : period === 'fortnightly' ? 26 : 12)) - loanAmount).toFixed(2))}</Box>
+        </Typography>
       </Box>
     </Grid>
   );
