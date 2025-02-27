@@ -67,7 +67,7 @@ const LoanInputForm = ({
           value={interestRate}
           onChange={(_, value) => setInterestRate(value as number)}
           min={5}
-          max={7}
+          max={10}
           step={0.1}
           marks
           valueLabelDisplay="auto"

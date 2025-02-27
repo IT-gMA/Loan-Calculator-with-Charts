@@ -70,7 +70,7 @@ function App() {
     return loanAmount >= 50000 && 
            loanAmount <= 950000 && 
            interestRate >= 5 && 
-           interestRate <= 7 && 
+           interestRate <= 10 && 
            years >= 5 && 
            years <= 30;
   };

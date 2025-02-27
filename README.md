@@ -6,7 +6,7 @@ A modern, interactive loan calculator built with React, TypeScript, and Material
 
 - Calculate loan payments with customizable parameters:
   - Loan amount ($50,000 - $950,000)
-  - Interest rate (5% - 7%)
+  - Interest rate (5% - 10%)
   - Loan term (5 - 30 years)
   - Payment frequency (weekly, fortnightly, monthly)
 - Interactive charts showing payment breakdown
@@ -41,7 +41,7 @@ The application will be available at `http://localhost:5173`
 ## Usage
 
 1. Enter the loan amount (between $50,000 and $950,000)
-2. Adjust the interest rate using the slider (5% - 7%)
+2. Adjust the interest rate using the slider (5% - 10%)
 3. Set the loan term using the slider (5 - 30 years)
 4. Select your preferred payment frequency (weekly, fortnightly, or monthly)
 5. View the calculated payment amount and payment breakdown chart
