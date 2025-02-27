@@ -1,10 +1,12 @@
 .
 ├── eslint.config.js
 ├── index.html
+├── netlify.toml
 ├── package-lock.json
 ├── package.json
-├── project_structure.txt
 ├── public
+│   ├── app-logo-2.svg
+│   ├── app-logo.jpg
 │   └── vite.svg
 ├── src
 │   ├── App.css
@@ -17,10 +19,14 @@
 │   │   ├── PaymentBreakdown
 │   │   │   └── PaymentBreakdown.tsx
 │   │   └── shared
-│   │       └── CustomButton
-│   │           └── CustomButton.tsx
+│   │       ├── CustomButton
+│   │       │   └── CustomButton.tsx
+│   │       └── DarkModeToggle
+│   │           └── DarkModeToggle.tsx
 │   ├── index.css
 │   ├── main.tsx
+│   ├── theme
+│   │   └── theme.ts
 │   ├── utils
 │   │   └── UtilFunctions.ts
 │   └── vite-env.d.ts
@@ -29,4 +35,4 @@
 ├── tsconfig.node.json
 └── vite.config.ts
 
-10 directories, 20 files
+12 directories, 24 files

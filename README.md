@@ -10,9 +10,10 @@ A modern, interactive loan calculator built with React, TypeScript, and Material
   - Loan term (5 - 30 years)
   - Payment frequency (weekly, fortnightly, monthly)
 - Interactive charts showing payment breakdown
+- Elegant dark/light mode toggle with custom-styled switch
 - Responsive design for all device sizes
 - Real-time calculation updates
-- Modern Material-UI interface
+- Modern Material-UI interface with smooth transitions
 
 ## Demo
 
