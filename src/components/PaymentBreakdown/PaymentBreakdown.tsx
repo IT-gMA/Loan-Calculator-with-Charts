@@ -84,13 +84,18 @@ const PaymentBreakdown = ({
       </Box>
       {/* Action buttons for applying changes and exporting data */}
       <Box sx={{ mb: 3 }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(3, 1fr)', 
+          gap: '16px'
+        }}>
           <Button 
             variant="contained" 
             onClick={onApply}
             disabled={!isValid}
             sx={{
               padding: '.5em 2em',
+              width: '100%',
               '&:focus': {
                 outline: 'none',
                 boxShadow: 'none'
@@ -105,7 +110,7 @@ const PaymentBreakdown = ({
               }
             }}
           >
-            Apply Changes
+            Apply
           </Button>
           <Button
             variant="contained"
@@ -113,6 +118,7 @@ const PaymentBreakdown = ({
             disabled={!isValid || chartData.length === 0}
             sx={{
               padding: '.5em 2em',
+              width: '100%',
               '&:focus': {
                 outline: 'none',
                 boxShadow: 'none'
@@ -127,13 +133,14 @@ const PaymentBreakdown = ({
               }
             }}
           >
-            Download Excel
+            Download
           </Button>
           <Button
             variant="contained"
             onClick={onReset}
             sx={{
               padding: '.5em 2em',
+              width: '100%',
               '&:focus': {
                 outline: 'none',
                 boxShadow: 'none'
