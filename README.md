@@ -16,7 +16,7 @@ A modern, interactive loan calculator built with React, TypeScript, and Material
 
 ## Demo
 
-[Live Demo](https://md-loan-calculator-cjs.netlify.app) (Coming soon)
+[Live Demo](https://md-loan-calculator-cjs.netlify.app)
 
 ## Installation
 
@@ -36,7 +36,7 @@ npm install
 npm run dev
 ```
 
-The application will be available at `https://md-loan-calculator-cjs.netlify.app`
+After that, the application will be available at `http://localhost:5173`
 
 ## Usage
 
