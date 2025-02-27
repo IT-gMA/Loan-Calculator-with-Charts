@@ -106,3 +106,5 @@ export const validateInputs = (loanAmount: number, interestRate: number, years: 
          years >= 5 && 
          years <= 30;
 };
+
+export const switchTrackBackgroundColour: string = '#d6d7dc';   // For Dark/Light Mode Toggles

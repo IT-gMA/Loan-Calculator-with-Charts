@@ -5,7 +5,7 @@ import {
   Typography,
   Grid,
   ThemeProvider,
-  createTheme
+  Box
 } from '@mui/material';
 import {
   Chart as ChartJS,
@@ -22,6 +22,8 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import LoanInputForm from './components/LoanInputForm/LoanInputForm';
 import PaymentBreakdown from './components/PaymentBreakdown/PaymentBreakdown';
+import DarkModeToggle from './components/shared/DarkModeToggle/DarkModeToggle';
+import getTheme from './theme/theme';
 
 type Period = 'weekly' | 'fortnightly' | 'monthly';
 type ChartScale = 'week' | 'month' | 'year';
@@ -35,13 +37,7 @@ ChartJS.register(
   Legend
 );
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#ffbb6d',
-    },
-  },
-});
+
 
 /**
  * Main App component for the Loan Calculator application.
@@ -190,42 +186,60 @@ function App() {
     return data;
   };
 
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  const theme = getTheme(darkMode ? 'dark' : 'light');
+
+  const handleDarkModeToggle = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: '1200px' }}>
-          <Typography variant="h4" gutterBottom>
-            Loan Calculator
-          </Typography>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', width: '100%' }}>
+        <Container maxWidth="lg" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: { xs: '48px 16px', md: '48px 24px' }, position: 'relative' }}>
+          <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: '1200px', mt: 2, position: 'relative' }}>
+            <DarkModeToggle isDarkMode={darkMode} onToggle={handleDarkModeToggle} />
+        <Typography variant="h4" gutterBottom>
+          Loan Calculator
+        </Typography>
 
-          <Grid container spacing={4}>
-            {/* Loan input form component */}
-            <LoanInputForm
-              loanAmount={loanAmount}
-              setLoanAmount={setLoanAmount}
-              interestRate={interestRate}
-              setInterestRate={setInterestRate}
-              years={years}
-              setYears={setYears}
-              period={period}
-              setPeriod={setPeriod}
-              payment={calculatePayments()}
-            />
+        <Grid container spacing={4}>
+          {/* Loan input form component */}
+          <LoanInputForm
+            loanAmount={loanAmount}
+            setLoanAmount={setLoanAmount}
+            interestRate={interestRate}
+            setInterestRate={setInterestRate}
+            years={years}
+            setYears={setYears}
+            period={period}
+            setPeriod={setPeriod}
+            payment={calculatePayments()}
+          />
 
-            {/* Payment breakdown chart component */}
-            <PaymentBreakdown
-              chartScale={chartScale}
-              setChartScale={setChartScale}
-              chartData={chartData}
-              period={period}
-              payment={calculatePayments()}
-              isValid={isValid}
-              onApply={handleApply}
-              onReset={handleReset}
-            />
-          </Grid>
-        </Paper>
-      </Container>
+          {/* Payment breakdown chart component */}
+          <PaymentBreakdown
+            chartScale={chartScale}
+            setChartScale={setChartScale}
+            chartData={chartData}
+            period={period}
+            payment={calculatePayments()}
+            isValid={isValid}
+            onApply={handleApply}
+            onReset={handleReset}
+          />
+        </Grid>
+      </Paper>
+        </Container>
+      </Box>
     </ThemeProvider>
   );
 }
