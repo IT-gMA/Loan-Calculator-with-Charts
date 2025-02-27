@@ -85,7 +85,7 @@ function App() {
   /**
    * Validates user inputs against predefined ranges
    * Loan amount: 50,000 - 950,000
-   * Interest rate: 5% - 7%
+   * Interest rate: 5% - 10%
    * Years: 5 - 30
    */
   const validateInputs = () => {
