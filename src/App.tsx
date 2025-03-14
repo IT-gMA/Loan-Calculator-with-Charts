@@ -136,7 +136,8 @@ function App() {
 
   /**
    * Calculates total number of periods for chart display
-   * based on selected chart scale
+   * based on selected chart scale to multiply the loan term
+   * in years by the number of periods per year
    */
   const calculateTotalPeriods: () => number = () => {
     return chartScale === 'year' ? years :
@@ -149,28 +150,30 @@ function App() {
    * Calculates principal and interest portions for each payment period
    */
   const generateChartData: () => {period: number, Principal: number, Interest: number}[] = () => {
-    const payment: number = calculatePayments();
-    const data: {period: number, Principal: number, Interest: number}[]  = [];
-    let remainingBalance = loanAmount;
+    const payment: number = calculatePayments();    // Fixed payment amount for each period
+    const data: {period: number, Principal: number, Interest: number}[]  = [];      // An empty array that will store the chart data objects.
+    let remainingBalance: number = loanAmount;      // Tracks the outstanding loan balance as payments are applied
+    // Defines how many payment periods occur in a year based on the payment frequency
     const periodsPerYear: {weekly: number, fortnightly: number, monthly: number} = {
       weekly: 52,
       fortnightly: 26,
       monthly: 12
     };
 
-    const totalPeriods: number = calculateTotalPeriods();
-    const periodInterestRate: number = (interestRate / 100) / periodsPerYear[period];
+    const periodInterestRate: number = (interestRate / 100) / periodsPerYear[period];   // The interest rate per period
 
-    for (let i = 1; i <= totalPeriods; i++) {
-      const periodInterest: number = remainingBalance * periodInterestRate;
-      const periodPrincipal: number = payment - periodInterest;
-      remainingBalance -= periodPrincipal;
+    // Simulating each payment: iterates from period 1 totThe total number of payments over the loan term
+    for (let i = 1; i <= calculateTotalPeriods(); i++) {
+        const periodInterest: number = remainingBalance * periodInterestRate;       // Interest for the current period
+        const periodPrincipal: number = payment - periodInterest;                   // The principal portion of the payment, this reduces the loan balance.
+        // Updates the remianing balance by subtracting the period principal. Over time, this decreases toward zero.
+        remainingBalance -= periodPrincipal;
 
-      data.push({
-        period: i,
-        Principal: Number(periodPrincipal.toFixed(2)),
-        Interest: Number(periodInterest.toFixed(2))
-      });
+        data.push({
+            period: i,
+            Principal: Number(periodPrincipal.toFixed(2)),
+            Interest: Number(periodInterest.toFixed(2))
+        });
     }
 
     return data;
