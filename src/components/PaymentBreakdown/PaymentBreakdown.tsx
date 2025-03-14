@@ -27,7 +27,7 @@ type ChartScale = 'week' | 'month' | 'year';
 interface PaymentBreakdownProps {
   chartScale: ChartScale;
   setChartScale: (value: ChartScale) => void;
-  chartData: Array<any>;
+  chartData: {period: number, Principal: number, Interest: number}[];
   period: 'weekly' | 'fortnightly' | 'monthly';
   payment: number;
   isValid: boolean;

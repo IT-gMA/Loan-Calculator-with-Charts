@@ -44,8 +44,8 @@ const LoanInputForm: React.FC<LoanInputFormProps> = ({
     setLoanAmount(value);
   };
 
-  const handleLoanAmountBlur = () => {
-    let formattedValue = loanAmount;
+  const handleLoanAmountBlur: () => void = () => {
+    let formattedValue: number = loanAmount;
 
     // Apply validation constraints
     formattedValue = formattedValue < minLoanAmount ? minLoanAmount : formattedValue > maxLoanAmount ? maxLoanAmount : formattedValue;

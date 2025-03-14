@@ -56,26 +56,26 @@ function App() {
 
   // State management for loan parameters and chart display
   const [loanAmount, setLoanAmount] = useState<number>(() => {
-    const saved = localStorage.getItem('loanAmount');
+    const saved: string | null = localStorage.getItem('loanAmount');
     return saved ? Number(saved) : defaultValues.loanAmount;
   });
   const [interestRate, setInterestRate] = useState<number>(() => {
-    const saved = localStorage.getItem('interestRate');
+    const saved: string | null = localStorage.getItem('interestRate');
     return saved ? Number(saved) : defaultValues.interestRate;
   });
   const [years, setYears] = useState<number>(() => {
-    const saved = localStorage.getItem('years');
+    const saved: string | null = localStorage.getItem('years');
     return saved ? Number(saved) : defaultValues.years;
   });
   const [period, setPeriod] = useState<Period>(() => {
-    const saved = localStorage.getItem('period');
+    const saved: string | null = localStorage.getItem('period');
     return saved ? saved as Period : defaultValues.period;
   });
   const [chartScale, setChartScale] = useState<ChartScale>(() => {
-    const saved = localStorage.getItem('chartScale');
+    const saved: string | null = localStorage.getItem('chartScale');
     return saved ? saved as ChartScale : defaultValues.chartScale;
   });
-  const [chartData, setChartData] = useState<Array<any>>([]);
+  const [chartData, setChartData] = useState<{period: number, Principal: number, Interest: number}[]>([]);
   const [isValid, setIsValid] = useState<boolean>(true);
 
   /**
@@ -83,11 +83,11 @@ function App() {
    * Validates inputs and updates chart data if valid.
    */
   const handleApply = () => {
-    const isInputValid = validateInputs(loanAmount, interestRate, years);
+    const isInputValid: boolean = validateInputs(loanAmount, interestRate, years);
     setIsValid(isInputValid);
 
     if (isInputValid) {
-      const newChartData = generateChartData();
+      const newChartData: {period: number, Principal: number, Interest: number}[] = generateChartData();
       setChartData(newChartData);
     }
   };
@@ -120,7 +120,7 @@ function App() {
    * Calculates periodic payment amount based on loan parameters
    * Uses compound interest formula
    */
-  const calculatePayments = () => {
+  const calculatePayments: () => number = () => {
     const periodsPerYear: {weekly: number, fortnightly: number, monthly: number} = {
       weekly: 52,
       fortnightly: 26,
@@ -138,7 +138,7 @@ function App() {
    * Calculates total number of periods for chart display
    * based on selected chart scale
    */
-  const calculateTotalPeriods = () => {
+  const calculateTotalPeriods: () => number = () => {
     return chartScale === 'year' ? years :
            chartScale === 'month' ? years * 12 :
            years * 52;
@@ -148,9 +148,9 @@ function App() {
    * Generates data for the payment breakdown chart
    * Calculates principal and interest portions for each payment period
    */
-  const generateChartData = () => {
-    const payment = calculatePayments();
-    const data = [];
+  const generateChartData: () => {period: number, Principal: number, Interest: number}[] = () => {
+    const payment: number = calculatePayments();
+    const data: {period: number, Principal: number, Interest: number}[]  = [];
     let remainingBalance = loanAmount;
     const periodsPerYear: {weekly: number, fortnightly: number, monthly: number} = {
       weekly: 52,
@@ -158,12 +158,12 @@ function App() {
       monthly: 12
     };
 
-    const totalPeriods = calculateTotalPeriods();
-    const periodInterestRate = (interestRate / 100) / periodsPerYear[period];
+    const totalPeriods: number = calculateTotalPeriods();
+    const periodInterestRate: number = (interestRate / 100) / periodsPerYear[period];
 
     for (let i = 1; i <= totalPeriods; i++) {
-      const periodInterest = remainingBalance * periodInterestRate;
-      const periodPrincipal = payment - periodInterest;
+      const periodInterest: number = remainingBalance * periodInterestRate;
+      const periodPrincipal: number = payment - periodInterest;
       remainingBalance -= periodPrincipal;
 
       data.push({
@@ -177,7 +177,7 @@ function App() {
   };
 
   const [darkMode, setDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('darkMode');
+    const saved: string | null = localStorage.getItem('darkMode');
     return saved ? JSON.parse(saved) : false;
   });
 
@@ -187,7 +187,7 @@ function App() {
 
   const theme = getTheme(darkMode ? 'dark' : 'light');
 
-  const handleDarkModeToggle = () => {
+  const handleDarkModeToggle: () => void = () => {
     setDarkMode(!darkMode);
   };
 
