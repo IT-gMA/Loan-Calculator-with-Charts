@@ -46,7 +46,7 @@ import {minLoanAmount, minInterest, validateInputs} from './utils/UtilFunctions'
  */
 function App() {
   // Default values for loan parameters
-  const defaultValues = {
+  const defaultValues: {loanAmount: number, interestRate: number, years: number, period: Period, chartScale: ChartScale} = {
     loanAmount: minLoanAmount,
     interestRate: minInterest,
     years: 5,
@@ -85,7 +85,7 @@ function App() {
   const handleApply = () => {
     const isInputValid = validateInputs(loanAmount, interestRate, years);
     setIsValid(isInputValid);
-    
+
     if (isInputValid) {
       const newChartData = generateChartData();
       setChartData(newChartData);
@@ -121,7 +121,7 @@ function App() {
    * Uses compound interest formula
    */
   const calculatePayments = () => {
-    const periodsPerYear = {
+    const periodsPerYear: {weekly: number, fortnightly: number, monthly: number} = {
       weekly: 52,
       fortnightly: 26,
       monthly: 12
@@ -139,7 +139,7 @@ function App() {
    * based on selected chart scale
    */
   const calculateTotalPeriods = () => {
-    return chartScale === 'year' ? years : 
+    return chartScale === 'year' ? years :
            chartScale === 'month' ? years * 12 :
            years * 52;
   };
@@ -152,7 +152,7 @@ function App() {
     const payment = calculatePayments();
     const data = [];
     let remainingBalance = loanAmount;
-    const periodsPerYear = {
+    const periodsPerYear: {weekly: number, fortnightly: number, monthly: number} = {
       weekly: 52,
       fortnightly: 26,
       monthly: 12

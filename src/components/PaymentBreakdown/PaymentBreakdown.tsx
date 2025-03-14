@@ -40,7 +40,7 @@ interface PaymentBreakdownProps {
  * Displays a stacked bar chart showing the breakdown of loan payments into principal and interest,
  * allows users to change the time scale of the chart, and provides options to export data to Excel.
  */
-const PaymentBreakdown = ({
+const PaymentBreakdown: React.FC<PaymentBreakdownProps> = ({
   chartScale,
   setChartScale,
   chartData,
@@ -84,13 +84,13 @@ const PaymentBreakdown = ({
       </Box>
       {/* Action buttons for applying changes and exporting data */}
       <Box sx={{ mb: 3 }}>
-        <Box sx={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(3, 1fr)', 
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '16px'
         }}>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={onApply}
             disabled={!isValid || chartData.length === 0}
             sx={{

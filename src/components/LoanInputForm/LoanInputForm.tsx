@@ -26,7 +26,7 @@ interface LoanInputFormProps {
   payment: number;
 }
 
-const LoanInputForm = ({
+const LoanInputForm: React.FC<LoanInputFormProps> = ({
   loanAmount,
   setLoanAmount,
   interestRate,
@@ -46,10 +46,10 @@ const LoanInputForm = ({
 
   const handleLoanAmountBlur = () => {
     let formattedValue = loanAmount;
-    
+
     // Apply validation constraints
     formattedValue = formattedValue < minLoanAmount ? minLoanAmount : formattedValue > maxLoanAmount ? maxLoanAmount : formattedValue;
-    
+
     // Format the value with thousand separators
     /*const numberFormat = new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 0,
