@@ -10,6 +10,7 @@ import {
   Grid,
   InputAdornment
 } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 type Period = 'weekly' | 'fortnightly' | 'monthly';
 import {numberWithCommas, minLoanAmount, maxLoanAmount, minInterest, maxInterest, validateInputs} from '../../utils/UtilFunctions';
@@ -26,6 +27,9 @@ interface LoanInputFormProps {
   payment: number;
 }
 
+const INTEREST_RATE_PATTERN = /^\d*(\.\d{0,2})?$/;
+const roundToTwoDecimals = (value: number): number => Number(value.toFixed(2));
+
 const LoanInputForm = ({
   loanAmount,
   setLoanAmount,
@@ -37,6 +41,12 @@ const LoanInputForm = ({
   setPeriod,
   payment
 }: LoanInputFormProps) => {
+  const [interestInput, setInterestInput] = useState<string>(interestRate.toFixed(2));
+
+  useEffect(() => {
+    setInterestInput(interestRate.toFixed(2));
+  }, [interestRate]);
+
   const handleLoanAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Remove leading zeros and convert to number
     const cleanValue = e.target.value.replace(/^0+/, '');
@@ -58,6 +68,41 @@ const LoanInputForm = ({
 
     setLoanAmount(formattedValue);
   };
+
+  const handleInterestRateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (!INTEREST_RATE_PATTERN.test(value)) {
+      return;
+    }
+
+    setInterestInput(value);
+
+    if (value === '' || value === '.') {
+      return;
+    }
+
+    const parsedValue = Number(value);
+    if (!Number.isNaN(parsedValue) && parsedValue >= minInterest && parsedValue <= maxInterest) {
+      setInterestRate(roundToTwoDecimals(parsedValue));
+    }
+  };
+
+  const handleInterestRateBlur = () => {
+    const parsedValue = Number(interestInput);
+    const boundedValue = Number.isNaN(parsedValue)
+      ? minInterest
+      : Math.min(maxInterest, Math.max(minInterest, parsedValue));
+    const normalizedValue = roundToTwoDecimals(boundedValue);
+    setInterestRate(normalizedValue);
+    setInterestInput(normalizedValue.toFixed(2));
+  };
+
+  const parsedInterestInput = Number(interestInput);
+  const isInterestInputOutOfRange =
+    interestInput !== '' &&
+    !Number.isNaN(parsedInterestInput) &&
+    (parsedInterestInput < minInterest || parsedInterestInput > maxInterest);
 
   return (
     <Grid item xs={12} md={6}>
@@ -101,15 +146,44 @@ const LoanInputForm = ({
       </Box>
 
       <Box sx={{ mb: 3 }}>
-        <Typography gutterBottom>Interest Rate: {interestRate}%</Typography>
+        <Typography gutterBottom>Interest Rate: {interestRate.toFixed(2)}%</Typography>
+        <TextField
+          fullWidth
+          label="Interest Rate"
+          type="text"
+          inputMode="decimal"
+          value={interestInput}
+          onChange={handleInterestRateInputChange}
+          onBlur={handleInterestRateBlur}
+          error={isInterestInputOutOfRange}
+          helperText={isInterestInputOutOfRange ? `Enter a rate between ${minInterest}% and ${maxInterest}%` : ''}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+          }}
+          sx={{
+            mb: 2,
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: 'primary.main',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: 'primary.main',
+              },
+            },
+            '& label.Mui-focused': {
+              color: 'primary.main',
+            },
+          }}
+        />
         <Slider
           value={interestRate}
-          onChange={(_, value) => setInterestRate(value as number)}
+          onChange={(_, value) => setInterestRate(roundToTwoDecimals(value as number))}
           min={minInterest}
           max={maxInterest}
-          step={0.1}
+          step={0.01}
           marks
           valueLabelDisplay="auto"
+          valueLabelFormat={(value) => `${Number(value).toFixed(2)}%`}
           sx={{
             '& .MuiSlider-thumb': {
               '&:hover, &.Mui-focusVisible': {
