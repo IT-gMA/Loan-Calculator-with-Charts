@@ -124,11 +124,11 @@ const LoanInputForm = ({
           }}
           sx={{
             '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-              WebkitAppearance: 'none',
+              '-webkit-appearance': 'none',
               margin: 0
             },
             '& input[type=number]': {
-              MozAppearance: 'textfield'
+              '-moz-appearance': 'textfield'
             },
             '& .MuiOutlinedInput-root': {
               '&:hover fieldset': {
