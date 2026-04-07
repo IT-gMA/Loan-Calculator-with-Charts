@@ -124,11 +124,11 @@ const LoanInputForm = ({
           }}
           sx={{
             '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-              '-webkit-appearance': 'none',
+              WebkitAppearance: 'none',
               margin: 0
             },
             '& input[type=number]': {
-              '-moz-appearance': 'textfield'
+              MozAppearance: 'textfield'
             },
             '& .MuiOutlinedInput-root': {
               '&:hover fieldset': {
@@ -150,7 +150,8 @@ const LoanInputForm = ({
         <TextField
           fullWidth
           label="Interest Rate"
-          type="number"
+          type="text"
+          inputMode="decimal"
           value={interestInput}
           onChange={handleInterestRateInputChange}
           onBlur={handleInterestRateBlur}
@@ -159,20 +160,8 @@ const LoanInputForm = ({
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           }}
-          inputProps={{
-            min: minInterest,
-            max: maxInterest,
-            step: 0.01,
-          }}
           sx={{
             mb: 2,
-            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-              '-webkit-appearance': 'none',
-              margin: 0
-            },
-            '& input[type=number]': {
-              '-moz-appearance': 'textfield'
-            },
             '& .MuiOutlinedInput-root': {
               '&:hover fieldset': {
                 borderColor: 'primary.main',
