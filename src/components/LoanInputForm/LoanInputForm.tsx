@@ -27,6 +27,9 @@ interface LoanInputFormProps {
   payment: number;
 }
 
+const INTEREST_RATE_PATTERN = /^\d*(\.\d{0,2})?$/;
+const roundToTwoDecimals = (value: number): number => Number(value.toFixed(2));
+
 const LoanInputForm = ({
   loanAmount,
   setLoanAmount,
@@ -69,7 +72,7 @@ const LoanInputForm = ({
   const handleInterestRateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
-    if (!/^\d*(\.\d{0,2})?$/.test(value)) {
+    if (!INTEREST_RATE_PATTERN.test(value)) {
       return;
     }
 
@@ -81,7 +84,7 @@ const LoanInputForm = ({
 
     const parsedValue = Number(value);
     if (!Number.isNaN(parsedValue) && parsedValue >= minInterest && parsedValue <= maxInterest) {
-      setInterestRate(Number(parsedValue.toFixed(2)));
+      setInterestRate(roundToTwoDecimals(parsedValue));
     }
   };
 
@@ -90,7 +93,7 @@ const LoanInputForm = ({
     const boundedValue = Number.isNaN(parsedValue)
       ? minInterest
       : Math.min(maxInterest, Math.max(minInterest, parsedValue));
-    const normalizedValue = Number(boundedValue.toFixed(2));
+    const normalizedValue = roundToTwoDecimals(boundedValue);
     setInterestRate(normalizedValue);
     setInterestInput(normalizedValue.toFixed(2));
   };
@@ -185,7 +188,7 @@ const LoanInputForm = ({
         />
         <Slider
           value={interestRate}
-          onChange={(_, value) => setInterestRate(Number((value as number).toFixed(2)))}
+          onChange={(_, value) => setInterestRate(roundToTwoDecimals(value as number))}
           min={minInterest}
           max={maxInterest}
           step={0.01}
