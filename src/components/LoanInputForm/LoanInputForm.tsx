@@ -242,13 +242,21 @@ const LoanInputForm = ({
           valueLabelDisplay="auto"
           valueLabelFormat={(value) => `${Number(value).toFixed(2)}%`}
           sx={{
+            '& .MuiSlider-rail': {
+              height: 4,
+              opacity: 0.38,
+            },
+            '& .MuiSlider-track': {
+              height: 6,
+              border: 'none',
+            },
             '& .MuiSlider-thumb': {
+              width: 16,
+              height: 16,
+              backgroundColor: '#d4896b',
               '&:hover, &.Mui-focusVisible': {
                 boxShadow: '0 0 0 8px rgba(255, 187, 109, 0.16)',
               },
-            },
-            '& .MuiSlider-track': {
-              transition: 'background-color 0.3s ease',
             },
           }}
         />
