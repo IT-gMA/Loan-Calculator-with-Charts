@@ -50,49 +50,76 @@ export const calculateTotalPeriods = (years: number, chartScale: ChartScale): nu
 };
 
 /**
- * Generates data for the payment breakdown chart, calculating principal and interest
- * portions for each payment period.
- * 
+ * Result returned by generateAmortisationData.
+ */
+export interface AmortisationResult {
+  chartData: Array<{ period: number; Principal: number; Interest: number }>;
+  totalInterest: number;
+  actualRepaymentPeriods: number;
+}
+
+/**
+ * Runs a full amortisation loop using a custom repayment amount and aggregates
+ * the period-level data into chart bars according to the selected chart scale.
+ *
  * @param loanAmount - The principal loan amount
  * @param interestRate - Annual interest rate as a percentage
- * @param years - Loan term in years
- * @param period - Payment frequency
- * @param chartScale - Time scale for chart display
- * @returns Array of objects containing period number and payment breakdown
+ * @param years - Loan term in years (used only as a safety limit)
+ * @param period - Repayment frequency (weekly, fortnightly, monthly)
+ * @param chartScale - Time scale for chart aggregation
+ * @param customRepayment - The periodic repayment amount (must be >= required minimum)
+ * @returns AmortisationResult containing chart data, total interest, and actual period count
  */
-export const generateChartData = (loanAmount: number, interestRate: number, years: number, period: Period, chartScale: ChartScale) => {
-  // Calculate periodic payment amount
-  const payment = calculatePayments(loanAmount, interestRate, years, period);
-  const data = [];
-  let remainingBalance = loanAmount;
-  
-  // Define payment periods per year
-  const periodsPerYear = {
-    weekly: 52,
-    fortnightly: 26,
-    monthly: 12
-  };
+export const generateAmortisationData = (
+  loanAmount: number,
+  interestRate: number,
+  years: number,
+  period: Period,
+  chartScale: ChartScale,
+  customRepayment: number
+): AmortisationResult => {
+  const periodsPerYear: Record<Period, number> = { weekly: 52, fortnightly: 26, monthly: 12 };
+  const ppy = periodsPerYear[period];
+  const periodicRate = (interestRate / 100) / ppy;
+  const maxPeriods = years * ppy * 2 + ppy; // safety upper bound
 
-  // Calculate total periods and periodic interest rate
-  const totalPeriods = calculateTotalPeriods(years, chartScale);
-  const periodInterestRate = (interestRate / 100) / periodsPerYear[period];
+  const allPeriods: Array<{ interest: number; principal: number }> = [];
+  // Track the unrounded balance to avoid per-iteration rounding drift.
+  // Rounding is applied only when recording values for output.
+  let balance = loanAmount;
 
-  // Generate payment breakdown for each period
-  for (let i = 1; i <= totalPeriods; i++) {
-    // Calculate interest and principal portions of payment
-    const periodInterest = remainingBalance * periodInterestRate;
-    const periodPrincipal = payment - periodInterest;
-    remainingBalance -= periodPrincipal;
-
-    // Add period data to chart dataset
-    data.push({
-      period: i,
-      Principal: Number(periodPrincipal.toFixed(2)),
-      Interest: Number(periodInterest.toFixed(2))
+  while (balance > 0.005 && allPeriods.length < maxPeriods) {
+    const interest = balance * periodicRate;
+    const principalPaid = Math.min(customRepayment - interest, balance);
+    // Guard: if customRepayment does not cover interest (should not happen when
+    // customRepayment >= required minimum, but guards against upstream validation failures).
+    if (principalPaid <= 0) break;
+    balance -= principalPaid;
+    if (balance < 0.005) balance = 0;
+    allPeriods.push({
+      interest: Number(interest.toFixed(2)),
+      principal: Number(principalPaid.toFixed(2)),
     });
   }
 
-  return data;
+  const totalInterest = Math.round(allPeriods.reduce((s, p) => s + p.interest, 0) * 100) / 100;
+  const actualRepaymentPeriods = allPeriods.length;
+
+  // Number of repayment periods that map to one chart bar
+  const chartPeriodsPerYear: Record<ChartScale, number> = { week: 52, fortnight: 26, month: 12, year: 1 };
+  const batchSize = Math.max(1, Math.round(ppy / chartPeriodsPerYear[chartScale]));
+
+  const chartData: Array<{ period: number; Principal: number; Interest: number }> = [];
+  for (let i = 0; i < allPeriods.length; i += batchSize) {
+    const batch = allPeriods.slice(i, i + batchSize);
+    chartData.push({
+      period: chartData.length + 1,
+      Principal: Number(batch.reduce((s, p) => s + p.principal, 0).toFixed(2)),
+      Interest: Number(batch.reduce((s, p) => s + p.interest, 0).toFixed(2)),
+    });
+  }
+
+  return { chartData, totalInterest, actualRepaymentPeriods };
 };
 
 /**

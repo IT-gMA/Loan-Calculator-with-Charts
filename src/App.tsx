@@ -36,7 +36,7 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-import {minLoanAmount, minInterest, validateInputs} from './utils/UtilFunctions';
+import {minLoanAmount, minInterest, validateInputs, calculatePayments as calcPayments, generateAmortisationData} from './utils/UtilFunctions';
 
 
 /**
@@ -77,6 +77,17 @@ function App() {
   });
   const [chartData, setChartData] = useState<Array<any>>([]);
   const [isValid, setIsValid] = useState<boolean>(true);
+  const [totalInterest, setTotalInterest] = useState<number>(0);
+  const [actualPeriods, setActualPeriods] = useState<number>(0);
+
+  // Initialise customRepayment from the same localStorage values used for the other inputs
+  const [customRepayment, setCustomRepayment] = useState<number>(() => {
+    const la = Number(localStorage.getItem('loanAmount') || defaultValues.loanAmount);
+    const ir = Number(localStorage.getItem('interestRate') || defaultValues.interestRate);
+    const yr = Number(localStorage.getItem('years') || defaultValues.years);
+    const pd = (localStorage.getItem('period') || defaultValues.period) as Period;
+    return calcPayments(la, ir, yr, pd);
+  });
 
   /**
    * Handles the apply button click.
@@ -87,8 +98,10 @@ function App() {
     setIsValid(isInputValid);
     
     if (isInputValid) {
-      const newChartData = generateChartData();
-      setChartData(newChartData);
+      const result = generateAmortisationData(loanAmount, interestRate, years, period, chartScale, customRepayment);
+      setChartData(result.chartData);
+      setTotalInterest(result.totalInterest);
+      setActualPeriods(result.actualRepaymentPeriods);
     }
   };
 
@@ -100,6 +113,11 @@ function App() {
     localStorage.setItem('period', period);
     localStorage.setItem('chartScale', chartScale);
   }, [loanAmount, interestRate, years, period, chartScale]);
+
+  // Reset customRepayment to the new required minimum when loan parameters change
+  useEffect(() => {
+    setCustomRepayment(calcPayments(loanAmount, interestRate, years, period));
+  }, [loanAmount, interestRate, years, period]);
 
   // Initial chart data generation
   useEffect(() => {
@@ -113,67 +131,8 @@ function App() {
     setYears(defaultValues.years);
     setPeriod(defaultValues.period);
     setChartScale(defaultValues.chartScale);
+    setCustomRepayment(calcPayments(defaultValues.loanAmount, defaultValues.interestRate, defaultValues.years, defaultValues.period));
     localStorage.clear();
-  };
-
-  /**
-   * Calculates periodic payment amount based on loan parameters
-   * Uses compound interest formula
-   */
-  const calculatePayments = () => {
-    const periodsPerYear = {
-      weekly: 52,
-      fortnightly: 26,
-      monthly: 12
-    };
-
-    const totalPeriods = years * periodsPerYear[period];
-    const periodicRate = (interestRate / 100) / periodsPerYear[period];
-    const payment = loanAmount * (periodicRate * Math.pow(1 + periodicRate, totalPeriods)) / (Math.pow(1 + periodicRate, totalPeriods) - 1);
-
-    return payment;
-  };
-
-  /**
-   * Calculates total number of periods for chart display
-   * based on selected chart scale
-   */
-  const calculateTotalPeriods = () => {
-    return chartScale === 'year' ? years : 
-           chartScale === 'month' ? years * 12 :
-           years * 52;
-  };
-
-  /**
-   * Generates data for the payment breakdown chart
-   * Calculates principal and interest portions for each payment period
-   */
-  const generateChartData = () => {
-    const payment = calculatePayments();
-    const data = [];
-    let remainingBalance = loanAmount;
-    const periodsPerYear = {
-      weekly: 52,
-      fortnightly: 26,
-      monthly: 12
-    };
-
-    const totalPeriods = calculateTotalPeriods();
-    const periodInterestRate = (interestRate / 100) / periodsPerYear[period];
-
-    for (let i = 1; i <= totalPeriods; i++) {
-      const periodInterest = remainingBalance * periodInterestRate;
-      const periodPrincipal = payment - periodInterest;
-      remainingBalance -= periodPrincipal;
-
-      data.push({
-        period: i,
-        Principal: Number(periodPrincipal.toFixed(2)),
-        Interest: Number(periodInterest.toFixed(2))
-      });
-    }
-
-    return data;
   };
 
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -212,7 +171,11 @@ function App() {
             setYears={setYears}
             period={period}
             setPeriod={setPeriod}
-            payment={calculatePayments()}
+            payment={calcPayments(loanAmount, interestRate, years, period)}
+            customRepayment={customRepayment}
+            setCustomRepayment={setCustomRepayment}
+            totalInterest={totalInterest}
+            actualPeriods={actualPeriods}
           />
 
           {/* Payment breakdown chart component */}
@@ -221,7 +184,7 @@ function App() {
             setChartScale={setChartScale}
             chartData={chartData}
             period={period}
-            payment={calculatePayments()}
+            payment={calcPayments(loanAmount, interestRate, years, period)}
             isValid={isValid}
             onApply={handleApply}
             onReset={handleReset}
