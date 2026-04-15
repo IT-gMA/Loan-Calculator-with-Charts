@@ -33,6 +33,9 @@ interface LoanInputFormProps {
 
 const INTEREST_RATE_PATTERN = /^\d*(\.\d{0,2})?$/;
 const REPAYMENT_PATTERN = /^\d*(\.\d{0,2})?$/;
+// Tolerance used to detect whether the user has entered a custom repayment above the
+// required minimum (avoids treating floating-point-equal values as "custom").
+const REPAYMENT_TOLERANCE = 0.005;
 const roundToTwoDecimals = (value: number): number => Number(value.toFixed(2));
 
 const LoanInputForm = ({
@@ -152,7 +155,9 @@ const LoanInputForm = ({
   // Compute payoff description when using a custom repayment above the minimum
   const periodsPerYear: Record<Period, number> = { weekly: 52, fortnightly: 26, monthly: 12 };
   const ppy = periodsPerYear[period];
-  const isCustom = customRepayment > payment + 0.004;
+  const isCustom = customRepayment > payment + REPAYMENT_TOLERANCE;
+  // payoffYears / payoffMonths: convert actualPeriods to years+months.
+  // Dividing the remainder by ppy gives the fractional year; multiplying by 12 gives months.
   const payoffYears = isCustom ? Math.floor(actualPeriods / ppy) : years;
   const payoffMonths = isCustom ? Math.round((actualPeriods % ppy) / ppy * 12) : 0;
 

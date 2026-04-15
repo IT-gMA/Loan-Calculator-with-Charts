@@ -84,15 +84,22 @@ export const generateAmortisationData = (
   const maxPeriods = years * ppy * 2 + ppy; // safety upper bound
 
   const allPeriods: Array<{ interest: number; principal: number }> = [];
+  // Track the unrounded balance to avoid per-iteration rounding drift.
+  // Rounding is applied only when recording values for output.
   let balance = loanAmount;
 
   while (balance > 0.005 && allPeriods.length < maxPeriods) {
-    const interest = Math.round(balance * periodicRate * 100) / 100;
+    const interest = balance * periodicRate;
     const principalPaid = Math.min(customRepayment - interest, balance);
-    if (principalPaid <= 0) break; // repayment does not cover interest
-    balance = Math.round((balance - principalPaid) * 100) / 100;
+    // Guard: if customRepayment does not cover interest (should not happen when
+    // customRepayment >= required minimum, but guards against upstream validation failures).
+    if (principalPaid <= 0) break;
+    balance -= principalPaid;
     if (balance < 0.005) balance = 0;
-    allPeriods.push({ interest, principal: principalPaid });
+    allPeriods.push({
+      interest: Number(interest.toFixed(2)),
+      principal: Number(principalPaid.toFixed(2)),
+    });
   }
 
   const totalInterest = Math.round(allPeriods.reduce((s, p) => s + p.interest, 0) * 100) / 100;
