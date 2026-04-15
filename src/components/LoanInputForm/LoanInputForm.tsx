@@ -25,9 +25,14 @@ interface LoanInputFormProps {
   period: Period;
   setPeriod: (value: Period) => void;
   payment: number;
+  customRepayment: number;
+  setCustomRepayment: (value: number) => void;
+  totalInterest: number;
+  actualPeriods: number;
 }
 
 const INTEREST_RATE_PATTERN = /^\d*(\.\d{0,2})?$/;
+const REPAYMENT_PATTERN = /^\d*(\.\d{0,2})?$/;
 const roundToTwoDecimals = (value: number): number => Number(value.toFixed(2));
 
 const LoanInputForm = ({
@@ -39,13 +44,23 @@ const LoanInputForm = ({
   setYears,
   period,
   setPeriod,
-  payment
+  payment,
+  customRepayment,
+  setCustomRepayment,
+  totalInterest,
+  actualPeriods
 }: LoanInputFormProps) => {
   const [interestInput, setInterestInput] = useState<string>(interestRate.toFixed(2));
+  const [customRepaymentInput, setCustomRepaymentInput] = useState<string>(customRepayment.toFixed(2));
 
   useEffect(() => {
     setInterestInput(interestRate.toFixed(2));
   }, [interestRate]);
+
+  // Keep the text input in sync whenever customRepayment is reset externally
+  useEffect(() => {
+    setCustomRepaymentInput(customRepayment.toFixed(2));
+  }, [customRepayment]);
 
   const handleLoanAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Remove leading zeros and convert to number
@@ -98,11 +113,48 @@ const LoanInputForm = ({
     setInterestInput(normalizedValue.toFixed(2));
   };
 
+  const handleCustomRepaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (!REPAYMENT_PATTERN.test(value)) {
+      return;
+    }
+    setCustomRepaymentInput(value);
+    if (value === '' || value === '.') {
+      return;
+    }
+    const parsed = Number(value);
+    if (!Number.isNaN(parsed) && parsed >= payment) {
+      setCustomRepayment(roundToTwoDecimals(parsed));
+    }
+  };
+
+  const handleCustomRepaymentBlur = () => {
+    const parsed = Number(customRepaymentInput);
+    const clamped = Number.isNaN(parsed) || parsed < payment
+      ? payment
+      : roundToTwoDecimals(parsed);
+    setCustomRepayment(clamped);
+    setCustomRepaymentInput(clamped.toFixed(2));
+  };
+
   const parsedInterestInput = Number(interestInput);
   const isInterestInputOutOfRange =
     interestInput !== '' &&
     !Number.isNaN(parsedInterestInput) &&
     (parsedInterestInput < minInterest || parsedInterestInput > maxInterest);
+
+  const parsedCustomRepayment = Number(customRepaymentInput);
+  const isCustomRepaymentBelowMin =
+    customRepaymentInput !== '' &&
+    !Number.isNaN(parsedCustomRepayment) &&
+    parsedCustomRepayment < payment;
+
+  // Compute payoff description when using a custom repayment above the minimum
+  const periodsPerYear: Record<Period, number> = { weekly: 52, fortnightly: 26, monthly: 12 };
+  const ppy = periodsPerYear[period];
+  const isCustom = customRepayment > payment + 0.004;
+  const payoffYears = isCustom ? Math.floor(actualPeriods / ppy) : years;
+  const payoffMonths = isCustom ? Math.round((actualPeriods % ppy) / ppy * 12) : 0;
 
   return (
     <Grid item xs={12} md={6}>
@@ -246,9 +298,45 @@ const LoanInputForm = ({
         <Typography variant="h6" sx={{ color: 'primary.main' }}>
           {period.charAt(0).toUpperCase() + period.slice(1)} Payment: ${payment.toFixed(2)}
         </Typography>
-        <Typography variant="body1" component="div" style={{ fontStyle: 'italic' }}>
-          <Box>To pay off ${numberWithCommas(loanAmount)} over {years} year{years > 1 ? 's' : ''} with a {interestRate}% interest</Box>
-          <Box>Total Interest Paid: ${numberWithCommas(parseFloat((payment * (years * (period === 'weekly' ? 52 : period === 'fortnightly' ? 26 : 12)) - loanAmount).toFixed(2)))}</Box>
+
+        {/* Custom Repayment Amount input */}
+        <Box sx={{ mt: 2 }}>
+          <TextField
+            fullWidth
+            label="Custom Repayment Amount"
+            type="text"
+            inputMode="decimal"
+            value={customRepaymentInput}
+            onChange={handleCustomRepaymentChange}
+            onBlur={handleCustomRepaymentBlur}
+            error={isCustomRepaymentBelowMin}
+            helperText={isCustomRepaymentBelowMin
+              ? `Minimum repayment is $${payment.toFixed(2)}`
+              : `Minimum: $${payment.toFixed(2)}`}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '&:hover fieldset': { borderColor: 'primary.main' },
+                '&.Mui-focused fieldset': { borderColor: 'primary.main' },
+              },
+              '& label.Mui-focused': { color: 'primary.main' },
+            }}
+          />
+        </Box>
+
+        <Typography variant="body1" component="div" style={{ fontStyle: 'italic', marginTop: '8px' }}>
+          {isCustom ? (
+            <Box>
+              Loan paid off in {payoffYears} year{payoffYears !== 1 ? 's' : ''}
+              {payoffMonths > 0 ? ` ${payoffMonths} month${payoffMonths !== 1 ? 's' : ''}` : ''}
+              {' '}(${numberWithCommas(loanAmount)} at {interestRate}%)
+            </Box>
+          ) : (
+            <Box>To pay off ${numberWithCommas(loanAmount)} over {years} year{years > 1 ? 's' : ''} with a {interestRate}% interest</Box>
+          )}
+          <Box>Total Interest Paid: ${numberWithCommas(parseFloat(totalInterest.toFixed(2)))}</Box>
         </Typography>
       </Box>
     </Grid>
