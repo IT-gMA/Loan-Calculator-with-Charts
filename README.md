@@ -1,6 +1,6 @@
 # Loan Calculator
 
-A modern, interactive loan calculator built with React, TypeScript, and Material-UI that helps users calculate loan payments and visualize payment breakdowns.
+A modern, interactive mortgage and loan calculator built with React, TypeScript, Vite, and Material-UI.
 
 ## Features
 
@@ -9,11 +9,13 @@ A modern, interactive loan calculator built with React, TypeScript, and Material
   - Interest rate (5% - 10%)
   - Loan term (5 - 30 years)
   - Payment frequency (weekly, fortnightly, monthly)
-- Interactive charts showing payment breakdown
-- Elegant dark/light mode toggle with custom-styled switch
-- Responsive design for all device sizes
-- Real-time calculation updates
-- Modern Material-UI interface with smooth transitions
+- Required payment calculation using mortgage amortisation
+- Custom repayment amount with minimum equal to the required payment
+- Faster payoff simulation that updates the chart dynamically
+- Principal and interest breakdown by chosen chart time scale
+- Excel export for payment schedule data
+- Light/dark mode toggle with responsive layout
+- User input persistence via browser storage
 
 ## Demo
 
@@ -37,15 +39,18 @@ npm install
 npm run dev
 ```
 
-After that, the application will be available at `http://localhost:5173`
+Then open `http://localhost:5173` in your browser.
 
 ## Usage
 
-1. Enter the loan amount (between $50,000 and $950,000)
-2. Adjust the interest rate using the slider (5% - 10%)
-3. Set the loan term using the slider (5 - 30 years)
-4. Select your preferred payment frequency (weekly, fortnightly, or monthly)
-5. View the calculated payment amount and payment breakdown chart
+1. Enter the loan amount within the allowed range.
+2. Adjust the interest rate using the slider or manual input.
+3. Choose the loan term in years.
+4. Select the repayment frequency.
+5. Review the calculated required payment.
+6. Enter a custom repayment amount that is equal to or greater than the required payment.
+7. Select a chart time scale and press `Apply` to refresh the chart.
+8. Download the amortisation data to Excel or reset the form as needed.
 
 ## Technologies Used
 
@@ -54,38 +59,29 @@ After that, the application will be available at `http://localhost:5173`
 - Vite
 - Material-UI (MUI)
 - Chart.js with react-chartjs-2
-- XLSX for data export
+- XLSX for Excel export
 
 ## Development
 
 ### Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build
+- `npm run dev` — Start the Vite development server
+- `npm run build` — Build the app for production
+- `npm run lint` — Run ESLint
+- `npm run preview` — Preview the production build
 
 ### Project Structure
 
-```
-src/
-├── components/
-│   ├── LoanInputForm/
-│   ├── PaymentBreakdown/
-│   └── shared/
-├── utils/
-├── assets/
-└── App.tsx
-```
+For the current project tree, see [`project_structure.txt`](./project_structure.txt).
 
 ## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+4. Push to your branch (`git push origin feature/AmazingFeature`)
+5. Open a pull request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
