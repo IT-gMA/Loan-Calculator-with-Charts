@@ -2,12 +2,11 @@
 ├── eslint.config.js
 ├── index.html
 ├── netlify.toml
-├── package-lock.json
-├── package.json
 ├── public
 │   ├── app-logo-2.svg
 │   ├── app-logo.jpg
 │   └── vite.svg
+├── README.md
 ├── src
 │   ├── App.css
 │   ├── App.tsx
@@ -31,8 +30,7 @@
 │   │   └── UtilFunctions.ts
 │   └── vite-env.d.ts
 ├── tsconfig.app.json
-├── tsconfig.json
 ├── tsconfig.node.json
 └── vite.config.ts
 
-12 directories, 24 files
+12 directories, 22 files
