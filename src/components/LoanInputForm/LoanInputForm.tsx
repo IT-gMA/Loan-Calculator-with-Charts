@@ -126,14 +126,14 @@ const LoanInputForm = ({
       return;
     }
     const parsed = Number(value);
-    if (!Number.isNaN(parsed) && parsed >= payment) {
+    if (!Number.isNaN(parsed) && parsed + REPAYMENT_TOLERANCE >= payment) {
       setCustomRepayment(roundToTwoDecimals(parsed));
     }
   };
 
   const handleCustomRepaymentBlur = () => {
     const parsed = Number(customRepaymentInput);
-    const clamped = Number.isNaN(parsed) || parsed < payment
+    const clamped = Number.isNaN(parsed) || parsed + REPAYMENT_TOLERANCE < payment
       ? payment
       : roundToTwoDecimals(parsed);
     setCustomRepayment(clamped);
@@ -150,7 +150,7 @@ const LoanInputForm = ({
   const isCustomRepaymentBelowMin =
     customRepaymentInput !== '' &&
     !Number.isNaN(parsedCustomRepayment) &&
-    parsedCustomRepayment < payment;
+    parsedCustomRepayment + REPAYMENT_TOLERANCE < payment;
 
   // Compute payoff description when using a custom repayment above the minimum
   const periodsPerYear: Record<Period, number> = { weekly: 52, fortnightly: 26, monthly: 12 };
