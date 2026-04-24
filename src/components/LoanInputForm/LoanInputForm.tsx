@@ -238,7 +238,6 @@ const LoanInputForm = ({
           min={minInterest}
           max={maxInterest}
           step={0.01}
-          marks
           valueLabelDisplay="auto"
           valueLabelFormat={(value) => `${Number(value).toFixed(2)}%`}
           sx={{
